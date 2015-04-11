@@ -1,19 +1,19 @@
-de#' Daily Tide Values
+#' Daily Tide Values
 #'
 #' Pulls out higher high, high, low, lower low tides from daily gauge values
-#' 
+#'
 #' @param level a vector gauge data. length and order same as daytime
-#' @param daytime a vector of daytime values from lubridate. 
+#' @param daytime a vector of daytime values from lubridate.
 #'                length and order same as daytime
-#' 
-#' @import dplyr
-#' 
+#'
+#' @import lubridate
+#'
 #' @export
 #' @examples
-#' tides<-read.csv("EDC_WaterLevel_Test.csv",stringsAsFactor=F)
-#' tides$DateTime <- parse_date_time(paste(tides$Date,tides$Time),
+#' file<-system.file("extdata","EDC_WaterLevel_Test.csv",package="tider")
+#' tides<-read.csv(file,stringsAsFactor=F)
+#' tides$DateTime <- lubridate::parse_date_time(paste(tides$Date,tides$Time),
 #'                                  "%m/%d/%y %H:%M:%S")
-#' plot(tides[,4],tides[,3])                                 
 #' daily_hl(tides$Depth_NAVD88m,tides$DateTime)
 
 daily_hl<-function(level,daytime){
@@ -43,6 +43,6 @@ daily_hl<-function(level,daytime){
     l_idx<-(idx1+idx2)==2
     l<-min(level[l_idx])
   }
-  idx<-daytime 
-  return(list(hh=hh,h=h,l=l,ll=ll))
+  idx<-daytime
+  return(list(higher_high=hh,high=h,low=l,lower_low=ll))
 }

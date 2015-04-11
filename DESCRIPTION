@@ -1,8 +1,18 @@
 Package: tider
-Title: What the Package Does (one line, title case)
-Version: 0.0.0.9000
-Authors@R: person("First", "Last", , "first.last@example.com", role = c("aut", "cre"))
-Description: What the package does (one paragraph)
-Depends: R (>= 3.1.3)
-License: What license is it under?
+Title: Parses water level guage data
+Version: 0.0.1.9000
+Authors@R: c(person("Jeffrey", "Hollister", , "hollister.jeff@epa.gov",
+                     role = c("aut", "cre")),
+             person("Andrew","Neil",,"andrew@edc.uri.edu",role=c("aut","ctb")))
+Description: Values such as Higher High, High, Low, etc are commonly used in
+             the analysis of tide data.  While predicted and measured values
+             are available for many locations, it is common to measure water
+             levels with data loggers.  This package parses the values from the
+             common data loggers and returns the commonly used tidal
+             measurements.
+Depends: R (>= 3.1.2)
+Imports:
+  lubridate,
+  dplyr
+License: CC0
 LazyData: true
