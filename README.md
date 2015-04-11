@@ -33,16 +33,16 @@ tide_meas
 ```
 
 ```
-## $hh
+## $higher_high
 ## [1] -0.0878
 ## 
-## $h
+## $high
 ## [1] -0.0942
 ## 
-## $l
+## $low
 ## [1] -0.282
 ## 
-## $ll
+## $lower_low
 ## [1] -0.344
 ```
 
@@ -53,20 +53,13 @@ plot(tides$DateTime,tides$Depth_NAVD88m)
 
 #plot tide measurements
 #higher high
-points(tides$DateTime[tides$Depth_NAVD88m==tide_meas[[1]]],tide_meas[[1]],col="red")
+points(tides$DateTime[tides$Depth_NAVD88m==tide_meas[[1]]],tide_meas[[1]],col="red",pch=19,cex=2)
 #high
-points(tides$DateTime[tides$Depth_NAVD88m==tide_meas[[2]]],tide_meas[[2]],col="blue")
+points(tides$DateTime[tides$Depth_NAVD88m==tide_meas[[2]]],tide_meas[[2]],col="blue",pch=19,cex=2)
 #low
-points(tides$DateTime[tides$Depth_NAVD88m==tide_meas[[3]]],tide_meas[[3]],col="yellow")
-```
-
-```
-## Error in xy.coords(x, y): 'x' and 'y' lengths differ
-```
-
-```r
+points(tides$DateTime[tides$Depth_NAVD88m==tide_meas[[3]]][2],tide_meas[[3]],col="yellow",pch=19,cex=2)
 #lower low
-points(tides$DateTime[tides$Depth_NAVD88m==tide_meas[[4]]],tide_meas[[4]],col="orange")
+points(tides$DateTime[tides$Depth_NAVD88m==tide_meas[[4]]],tide_meas[[4]],col="orange",pch=19,cex=2)
 ```
 
 ![plot of chunk unnamed-chunk-3](figure/unnamed-chunk-3-1.png) 
