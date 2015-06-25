@@ -1,7 +1,7 @@
 Package: tider
 Title: Parses Water Level Guage Data
 Version: 0.0.2.9000
-Date: 2015-06-21
+Date: 2015-06-25
 Authors@R: c(person("Jeffrey", "Hollister", , "hollister.jeff@epa.gov",
                      role = c("aut", "cre")),
              person("Andrew","Neil",,"andrew@edc.uri.edu",role=c("aut","ctb")))
