@@ -18,3 +18,13 @@ two_day_tides_meas
 #plot data
 plot(tides$DateTime,tides$Depth_NAVD88m)
 plot(two_day_tides$DateTime,two_day_tides$Depth_NAVD88m)
+
+#get all data
+all<-system.file("extdata","asis_tides_AllData.csv",package="tider")
+all_tides<-read.csv(all,stringsAsFactor=F)
+#Create a Date/Time vector
+all_tides$DateTime <- lubridate::parse_date_time(paste(all_tides$Date,all_tides$Time),
+                                             "%m/%d/%y %H:%M:%S")
+#Get all values
+all_tide_meas<-tider_byday(all_tides,"Depth_NAVD88m","DateTime")
+all_tide_meas
