@@ -16,7 +16,7 @@
 #' tides<-read.csv(file,stringsAsFactor=F)
 #' tides$DateTime <- lubridate::parse_date_time(paste(tides$Date,tides$Time),
 #'                                  "%m/%d/%y %H:%M:%S")
-#' daily_hl(tides$Depth_NAVD88m,tides$DateTime)
+#' daily_hl(tides, "Depth_NAVD88m", "DateTime")
 
 daily_hl<-function(df,level,daytime){
   level <- df[[level]]
