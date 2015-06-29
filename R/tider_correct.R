@@ -58,14 +58,14 @@ tider_correct <- function(df_sub, df_ctrl,level, daytime, mhw_ctrl,s2_ctrl,mn_ct
               mmlw_ctrl=mean(low),
               mmn_ctrl = mean(high) - mean(low))
 
-
+  ###find corrected mn_sub
   ratio_mmn <- c(mmn_sub/mmn_ctrl)
   sums <- sum(ratio_mmn)
   total_months <- NROW(mm_ctrl)
   means <- sums/total_months
   mn_sub <- mn_ctrl + means
 
-
+ ### calculate MHWS
   mhws  <- mn_ctrl/mn_sub * mhws_ctrl
 
   ### figure out error of mhws value
