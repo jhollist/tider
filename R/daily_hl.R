@@ -40,7 +40,7 @@ daily_hl<-function(df,level,daytime){
   }
   if(hour(dt_ll)>12){
     idx1<-hour(daytime)>=hour(dt_ll)-14
-    idx2<-hour(daytime)<=hour(dt_hh)-11
+    idx2<-hour(daytime)<=hour(dt_ll)-11
     l_idx<-(idx1+idx2)==2
     l<-min(level[l_idx])
     dt_l<-min(daytime[level==l])

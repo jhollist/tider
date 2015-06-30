@@ -16,4 +16,11 @@ tider_byday(df, level, daytime)
 \description{
 Return a data frame of tide metrics per day
 }
+\examples{
+file<-system.file("extdata","TideFile2days.csv",package="tider")
+tides<-read.csv(file,stringsAsFactor=F)
+tides$DateTime <- lubridate::parse_date_time(paste(tides$Date,tides$Time),
+                                 "\%m/\%d/\%y \%H:\%M:\%S")
+tider_byday(tides, "Depth_NAVD88m", "DateTime")
+}
 
