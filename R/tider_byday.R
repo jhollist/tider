@@ -3,7 +3,7 @@
 #' @param data frame containg tide data and day time.
 #' @param level character of column containing gauge data.
 #' @param daytime character of column containing daytime values from lubridate.
-#'
+#' @import lubridate
 #' @export
 #' @examples
 #' file<-system.file("extdata","TideFile2days.csv",package="tider")
