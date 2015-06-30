@@ -8,7 +8,7 @@
 #' @param daytime character of column containing daytime values from lubridate.
 #'
 #'
-#' @importFrom lubridate hour
+#' @import lubridate
 #'
 #' @export
 #' @examples

@@ -35,7 +35,7 @@ tider_byday<-function(df,level,daytime){
 #' @param daytime POSIXct vector of daytime for a single day
 #'
 #'
-#' @importFrom lubridate hour
+#' @import lubridate
 #'
 #' @export
 #' @examples
