@@ -18,58 +18,105 @@
 #' @return returns a numeric of the mean high water spring or neap
 #' @export
 #'
-#'sub$DateTime <- lubridate::parse_date_time(paste(sub$Date,sub$Time),
+#'df_sub$DateTime <- lubridate::parse_date_time(paste(df_sub$Date,df_sub$Time),
 #'                                           "%m/%d/%y %H:%M:%S")
-#'ctrl$DateTime <- lubridate::parse_date_time(paste(ctrl$Date,ctrl$Time),
-#'                                           "%m/%d/%y %H:%M:%S")
+#'df_ctrl$DateTime <- lubridate::parse_date_time(paste(df_ctrl$Date,df_ctrl$Time),
+#'                                        "%m/%d/%y %H:%M:%S")
 
-tider_correct <- function(df_sub, df_ctrl,level, daytime, mhw_ctrl,s2_ctrl,mn_ctrl, type=c("spring","neap")){
-  type <- match.args(type)
+spring  <- tider_correct(sub, ctrl, "level",
+                         "DateTime",
+                         "level",
+                         "DateTime",
+                         1.6, .35, 4.07, "spring")
+
+tider_correct <- function(df_sub, df_ctrl,sub_level, sub_daytime, ctrl_level, ctrl_daytime,
+                          mhw_ctrl,s2_ctrl,mn_ctrl, type=c("spring","neap")){
+  #type <- match.args(type)
+
+  require(dplyr)
+  require(lubridate)
+  require(tider)
+
+
+  df_sub  <- data.frame(sub_level = df_sub$sub_level, sub_daytime = df_sub$sub_daytime )
+  df_ctrl  <- data.frame(ctrl_level = df_ctrl$ctrl_level, ctrl_daytime = df_ctrl$ctrl_daytime )
+
+
+
+  ### check for gaps
+  ### 4 hrs or less fill using least sqaures curve
+  ### over 4hrs stop program and tell user to fill
 
   mwhs_ctrl <- mhw_ctrl + s2_ctrl
 
-  ### fill in gaps if less than four hours other wise
-  ### stop and tell user need to fill in gaps
+  #find daily high and low tides
+  daily_sub<-tider_byday(df_sub,"sub_level","sub_daytime")
+  daily_ctrl<-tider_byday(df_ctrl,"ctrl_level","ctrl_daytime")
 
-  daily_sub<-tider_byday(df_sub,"level","daytime")
-  daily_ctrl<-tider_byday(ctrl,"level","daytime")
+  daily_sub$higher_high <- as.numeric(as.character(daily_sub$higher_high))
+  daily_sub$lower_low <- as.numeric(as.character(daily_sub$lower_low))
+  daily_sub$high <- as.numeric(as.character(daily_sub$high))
+  daily_sub$low <- as.numeric(as.character(daily_sub$low))
+  daily_ctrl$higher_high <- as.numeric(as.character(daily_ctrl$higher_high))
+  daily_ctrl$lower_low <- as.numeric(as.character(daily_ctrl$lower_low))
+  daily_ctrl$high <- as.numeric(as.character(daily_ctrl$high))
+  daily_ctrl$low <- as.numeric(as.character(daily_ctrl$low))
 
-  ###get rid of any -Inf or Inf in data
+  daily_sub[ is.infinite(daily_sub$low), "low"  ]  <- daily_sub[ is.infinite(daily_sub$low), "lower_low" ]
+  daily_sub[ is.infinite(daily_sub$high), "high"  ]  <- daily_sub[ is.infinite(daily_sub$high), "higher_high" ]
+  daily_ctrl[ is.infinite(daily_ctrl$low), "low"  ]  <- daily_ctrl[ is.infinite(daily_ctrl$low), "lower_low" ]
+  daily_ctrl[ is.infinite(daily_ctrl$high), "high"  ]  <- daily_ctrl[ is.infinite(daily_ctrl$high), "higher_high" ]
+  daily_sub[ is.na(daily_sub$low), "low"  ]  <- daily_sub[ is.na(daily_sub$low), "lower_low" ]
+  daily_sub[ is.na(daily_sub$high), "high"  ]  <- daily_sub[ is.na(daily_sub$high), "higher_high" ]
+  daily_ctrl[ is.na(daily_ctrl$low), "low"  ]  <- daily_ctrl[ is.na(daily_ctrl$low), "lower_low" ]
+  daily_ctrl[ is.na(daily_ctrl$high), "high"  ]  <- daily_ctrl[ is.na(daily_ctrl$high), "higher_high" ]
 
-  df_sub$higher_high <- as.numeric(as.character(df_sub$higher_high))
-  df_sub$lower_low <- as.numeric(as.character(df_sub$lower_low))
-  df_sub$high <- as.numeric(as.character(df_sub$high))
-  df_sub$low <- as.numeric(as.character(df_sub$low))
-
-  df_ctrl$higher_high <- as.numeric(as.character(df_ctrl$higher_high))
-  df_ctrl$lower_low <- as.numeric(as.character(df_ctrl$lower_low))
-  df_ctrl$high <- as.numeric(as.character(df_ctrl$high))
-  df_ctrl$low <- as.numeric(as.character(df_ctrl$low))
-
-
-  mm_sub<-df_sub %>%
+  #calculate monthly values
+  mm_sub<-daily_sub %>%
     group_by(Year=year(ymd), Month=month(ymd)) %>%
-    summarise(mmhw_sub=mean(high),
-              mmlw_sub=mean(low),
-              mmn_sub = mean(high) - mean(low))
-  mm_ctrl<-df_ctrl %>%
-    group_by(Year=year(ymd), Month=month(ymd)) %>%
-    summarise(mmhw_ctrl=mean(high),
-              mmlw_ctrl=mean(low),
-              mmn_ctrl = mean(high) - mean(low))
+    summarise(sum_hh = sum(higher_high),
+              sum_h= sum(high),
+              sum_l= sum(low),
+              sum_ll = sum(lower_low),
+              num_obs = NROW(high))
 
-  ###find corrected mn_sub
-  ratio_mmn <- c(mmn_sub/mmn_ctrl)
+  mm_sub<-daily_sub %>%
+    group_by(Year=year(ymd), Month=month(ymd)) %>%
+    summarise(sum_hh = sum(higher_high),
+              sum_h= sum(high),
+              sum_l= sum(low),
+              sum_ll = sum(lower_low),
+              num_obs = NROW(high))
+
+  m_mhw <- cbind(mm_sub$sum_hh + mm_sub$sum_h)/(mm_sub$num_obs*2)
+  mm_sub$mmhw <- m_mhw
+  m_mlw  <-  cbind(mm_sub$sum_ll + mm_sub$sum_l)/(mm_sub$num_obs *2)
+  mm_sub$mmlw <- m_mlw
+  m_mn  <-  cbind(mm_sub$mmhw - mm_sub$mmlw)
+  mm_sub$mmn   <- m_m
+
+  mm_ctrl<-daily_ctrl %>%
+    group_by(Year=year(ymd), Month=month(ymd)) %>%
+    summarise(sum_hh = sum(higher_high),
+              sum_h= sum(high),
+              sum_l= sum(low),
+              sum_ll = sum(lower_low),
+              num_days = NROW(high))
+  m_mhw <- cbind(mm_ctrl$sum_hh + mm_ctrl$sum_h)/(mm_ctrl$num_days*2)
+  mm_ctrl$mmhw <- m_mhw
+  m_mlw  <-  cbind(mm_ctrl$sum_ll + mm_ctrl$sum_l)/(mm_ctrl$num_days *2)
+  mm_ctrl$mmlw <- m_mlw
+  m_mn  <-  cbind(mm_ctrl$mmhw - mm_ctrl$mmlw)
+  mm_ctrl$mmn   <- m_mn
+
+  #simultaneous comparsion method
+  ratio_mmn <- c(mm_sub$mmn/mm_ctrl$mmn)
   sums <- sum(ratio_mmn)
   total_months <- NROW(mm_ctrl)
   means <- sums/total_months
   mn_sub <- mn_ctrl + means
 
- ### calculate MHWS
-  mhws  <- mn_ctrl/mn_sub * mhws_ctrl
-
-  ### figure out error of mhws value
-  ### need to return error
+  mhws  <- mn_sub/mn_ctrl * mhws_ctrl
 
   return(mhws)
 }
