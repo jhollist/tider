@@ -2,24 +2,52 @@
 % Please edit documentation in R/tider_correct.R
 \name{tider_correct}
 \alias{tider_correct}
-\title{Calculate corrected spring, neap, etc.}
+\title{Calculate Mean High Water spring, neap,}
 \usage{
-tider_correct(mhw_acc, s2_ctrl, mn_acc, type = c("spring", "neap"))
+tider_correct(df_sub, df_ctrl, sub_level, sub_daytime, ctrl_level, ctrl_daytime,
+  mhw_ctrl, s2_ctrl, mn_ctrl, type = c("spring", "neap"))
 }
 \arguments{
-\item{mhw_acc}{A numeric of the Mean High Water of the nearest NOAA Control Station}
+\item{df_sub}{data frame for subordinate/short term station}
 
-\item{s2_ctrl}{A numeric of the Prinicipal solor semidiurnal constituent from the nearest NOAA
+\item{df_ctrl}{data fram for control station}
+
+\item{sub_level}{character of column containg gauge data for the subordinate station}
+
+\item{sub_daytime}{character of column containg daytime values subordinate station}
+
+\item{ctrl_level}{character of column containg gauge data for the control station}
+
+\item{ctrl_daytime}{character of column containg daytime values for the control station}
+
+\item{mhw_ctrl}{A numeric of the Mean High Water of the nearest NOAA Control Station}
+
+\item{s2_ctrl}{A numeric of the Prinicipal solor semidiurnal constituent from tAmatchhe nearest NOAA
 control station.}
 
-\item{mn_acc}{A numeric of the Mean range from nearest NOAA control station}
+\item{mn_ctrl}{A numeric of the Mean range of tide from nearest NOAA control station}
 
 \item{type}{the corrected value to return}
 }
 \value{
-returns a numeric of the corrected spring or neap
+returns a numeric of the mean high water spring or neap
 }
 \description{
-Need better description here
+During spring tides higher high tides are produced. This
+package calculates mean high water spring at a desired location.
+Since often only short term data is available, this package uses the
+simltaneous comparison method to compute the datum. Data from the desired location and a
+control station for the same time period is required.
+}
+\examples{
+i<-system.file("i.csv",package="tider")
+e<-system.file("e.csv",package="tider")
+i$DateTime <- lubridate::parse_date_time(paste(i$Date,i$Time),
+                                          "\%m/\%d/\%y \%H:\%M:\%S")
+e$DateTime <- lubridate::parse_date_time(paste(e$Date,e$Time),
+                                       "\%m/\%d/\%y \%H:\%M:\%S")
+
+m  <- tider_correct(i, e, "Level", "DateTime", "Level", "DateTime", (8.34-6.06),
+                     42, 4.53, "spring")
 }
 

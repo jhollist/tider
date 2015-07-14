@@ -2,6 +2,7 @@
 
 export(daily_hl)
 export(tider_byday)
+export(tider_byday_dep)
 export(tider_correct)
 export(tider_hl)
 import(lubridate)

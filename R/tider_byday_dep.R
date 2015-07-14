@@ -5,7 +5,7 @@
 #' @param daytime character of column containing daytime values from lubridate.
 #'
 #' @export
-tider_byday<-function(df,level,daytime){
+tider_byday_dep<-function(df,level,daytime){
 
  df <- data.frame(level = df[[level]],daytime = df[[daytime]],
                   ymd = factor(as.character(strptime(df[[daytime]],"%Y-%m-%d"))))
