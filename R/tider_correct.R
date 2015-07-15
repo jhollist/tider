@@ -19,10 +19,11 @@
 #' @param mn_ctrl A numeric of the Mean range of tide from nearest NOAA control station
 #' @param type the corrected value to return
 #' @return returns a numeric of the mean high water spring or neap
+#' @import dplyr
 #' @export
 #' @examples
-#' i<-system.file("i.csv",package="tider")
-#' e<-system.file("e.csv",package="tider")
+#' i<-read.csv(system.file("extdata","i.csv",package="tider"))
+#' e<-read.csv(system.file("extdata","e.csv",package="tider"))
 #' i$DateTime <- lubridate::parse_date_time(paste(i$Date,i$Time),
 #'                                           "%m/%d/%y %H:%M:%S")
 #' e$DateTime <- lubridate::parse_date_time(paste(e$Date,e$Time),

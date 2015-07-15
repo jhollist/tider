@@ -40,8 +40,8 @@ simltaneous comparison method to compute the datum. Data from the desired locati
 control station for the same time period is required.
 }
 \examples{
-i<-system.file("i.csv",package="tider")
-e<-system.file("e.csv",package="tider")
+i<-read.csv(system.file("extdata","i.csv",package="tider"))
+e<-read.csv(system.file("extdata","e.csv",package="tider"))
 i$DateTime <- lubridate::parse_date_time(paste(i$Date,i$Time),
                                           "\%m/\%d/\%y \%H:\%M:\%S")
 e$DateTime <- lubridate::parse_date_time(paste(e$Date,e$Time),

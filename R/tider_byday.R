@@ -7,9 +7,11 @@
 #' @export
 #' @examples
 #' file<-system.file("extdata","TideFile2days.csv",package="tider")
+#' #tides<-read.csv(system.file("extdata","i.csv",package="tider"))
 #' tides<-read.csv(file,stringsAsFactor=F)
 #' tides$DateTime <- lubridate::parse_date_time(paste(tides$Date,tides$Time),
 #'                                  "%m/%d/%y %H:%M:%S")
+#' #tider_byday(tides,"Level","DateTime")
 #' tider_byday(tides, "Depth_NAVD88m", "DateTime")
 tider_byday<-function(df,level,daytime){
  df <- data.frame(level = df[[level]],daytime = df[[daytime]],
